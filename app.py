@@ -151,6 +151,56 @@ CSS = f"""
 
 .note {{ background: #F5F7FB; border-radius: 12px; padding: 12px 16px; color: #475467; font-size: .9rem; }}
 .sidebar-brand {{ font-size: 1.15rem; font-weight: 800; color: {NAVY}; margin-bottom: 4px; }}
+.tbl-wrap {{ width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }}
+
+/* Footer */
+.footer {{
+  margin-top: 48px; padding: 22px 16px 6px 16px; border-top: 1px solid #E6E9F0;
+  text-align: center; color: #667085; font-size: .9rem; letter-spacing: .2px;
+}}
+
+/* Tablet */
+@media (max-width: 1024px) {{
+  .block-container {{ padding-left: 1.5rem; padding-right: 1.5rem; }}
+  .kpi-value {{ font-size: 1.7rem; }}
+}}
+
+/* Mobile */
+@media (max-width: 640px) {{
+  .block-container {{ padding: 1.2rem 1rem 2rem 1rem; }}
+  [data-testid="stHorizontalBlock"] {{ flex-wrap: wrap; gap: .75rem; }}
+  [data-testid="stColumn"] {{ width: 100% !important; flex: 1 1 100% !important; min-width: 100% !important; }}
+  [data-testid="stColumn"]:empty, [data-testid="stColumn"]:not(:has(*)) {{ display: none; }}
+
+  .hero {{ padding: 18px 18px; border-radius: 14px; margin-bottom: 12px; }}
+  .hero h1 {{ font-size: 1.35rem; line-height: 1.35; }}
+  .hero p {{ font-size: .9rem; }}
+  .hero .chip {{ font-size: .75rem; padding: 3px 10px; }}
+
+  .section-title {{ font-size: 1.05rem; margin: 16px 0 8px 0; }}
+  .section-sub {{ font-size: .82rem; }}
+
+  .kpi-grid {{ grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }}
+  .kpi {{ padding: 12px 12px; border-radius: 12px; }}
+  .kpi-label {{ font-size: .8rem; }}
+  .kpi-value {{ font-size: 1.45rem; }}
+  .kpi-sub {{ font-size: .72rem; }}
+
+  .tbl {{ font-size: .8rem; }}
+  .tbl th, .tbl td {{ padding: 7px 9px; }}
+
+  .stTabs [data-baseweb="tab-list"] {{ overflow-x: auto; flex-wrap: nowrap; }}
+  .stTabs [data-baseweb="tab"] {{ padding: 8px 10px; font-size: .88rem; white-space: nowrap; }}
+
+  .score .val {{ font-size: 2.4rem; }}
+  .risk {{ padding: 14px; gap: 10px; }}
+  .risk-icon {{ font-size: 1.6rem; }}
+  .risk-title {{ font-size: 1.08rem; }}
+  .risk-text {{ font-size: .88rem; }}
+
+  .stButton button, .stFormSubmitButton button {{ min-height: 44px; }}
+  .footer {{ margin-top: 32px; font-size: .82rem; }}
+}}
 </style>
 """
 st.markdown(CSS, unsafe_allow_html=True)
@@ -200,7 +250,7 @@ def table(headers: list[str], rows: list[list[str]], num_cols: tuple = (), highl
     for r_i, row in enumerate(rows):
         cells = "".join(f'<td class="{"num" if i in num_cols else ""}">{c}</td>' for i, c in enumerate(row))
         body += f'<tr class="{"hl" if r_i == highlight else ""}">{cells}</tr>'
-    html(f'<table class="tbl"><thead><tr>{head}</tr></thead><tbody>{body}</tbody></table>')
+    html(f'<div class="tbl-wrap"><table class="tbl"><thead><tr>{head}</tr></thead><tbody>{body}</tbody></table></div>')
 
 
 def style_fig(fig: go.Figure, height: int = 380) -> go.Figure:
@@ -606,3 +656,6 @@ with tab_predict:
                 fig.update_xaxes(range=[-lim, lim])
                 chart(fig, 300)
                 st.caption("אדום: מעלה את הסיכון · ירוק: מוריד את הסיכון (ביחס לעסקה ממוצעת).")
+
+# ---------------------------------------------------------------- footer
+html('<div class="footer">© כל הזכויות שמורות לאיתי בסטקר</div>')
