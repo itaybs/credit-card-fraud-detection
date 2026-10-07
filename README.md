@@ -1,65 +1,84 @@
-# Credit Card Fraud Detection & Interactive ML Dashboard
+<div align="center">
+
+# זיהוי הונאות בכרטיסי אשראי
+### מודל Machine Learning ודשבורד אינטראקטיבי לניתוח סיכונים
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.50%2B-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![scikit-learn](https://img.shields.io/badge/scikit--learn-1.3%2B-F7931E?logo=scikitlearn&logoColor=white)](https://scikit-learn.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-An end-to-end machine learning project that detects fraudulent credit card transactions with a **class-weighted Logistic Regression** model and a **cross-validated decision threshold**. The results are presented in an interactive **Streamlit** dashboard for model analysis and real-time risk scoring.
+</div>
+
+פרויקט Machine Learning מקצה לקצה לזיהוי עסקאות הונאה בכרטיסי אשראי. הפרויקט משלב מודל **Logistic Regression** עם שקלול מחלקות, **סף החלטה (Decision Threshold)** שכויל באמצעות Cross-Validation, ודשבורד **Streamlit** אינטראקטיבי לניתוח ביצועי המודל ולחיזוי סיכון בזמן אמת.
 
 ---
 
-## Table of Contents
+## תקציר מנהלים
 
-- [Overview & Business Problem](#overview--business-problem)
-- [Dataset](#dataset)
-- [Methodology & ML Pipeline](#methodology--ml-pipeline)
-- [Model Performance & Results](#model-performance--results)
-- [Dashboard Features](#dashboard-features)
-- [Project Structure](#project-structure)
-- [Installation & Local Execution](#installation--local-execution)
-- [Deployment (Streamlit Community Cloud)](#deployment-streamlit-community-cloud)
-- [Limitations & Future Work](#limitations--future-work)
-- [License](#license)
+| מדד | ערך | משמעות |
+|---|:---:|---|
+| **ROC AUC** | **0.993** | הפרדה כמעט מושלמת בין עסקאות הונאה לעסקאות לגיטימיות |
+| **F1-Score** | **0.613** | שיפור של 48% לעומת סף ברירת המחדל (0.414) |
+| **Precision** | **0.511** | פי 2 לעומת סף ברירת המחדל (0.261) |
+| **Recall** | **0.767** | זיהוי של 23 מתוך 30 מקרי הונאה בסט הבדיקה |
+| **התראות שווא** | **22 במקום 85** | ירידה של 74% בחסימת לקוחות לגיטימיים |
 
 ---
 
-## Overview & Business Problem
+## תוכן עניינים
 
-Fraud detection is a classic **highly imbalanced classification** problem. In this 10,000-transaction dataset only **151 transactions (1.51%)** are fraudulent, a ratio of roughly **1 : 65**. A model that blindly labels every transaction as legitimate would reach **98.5% accuracy** while catching **zero fraud**, so accuracy is not a useful metric here.
+1. [הבעיה העסקית](#הבעיה-העסקית)
+2. [מאגר הנתונים](#מאגר-הנתונים)
+3. [מתודולוגיה ו-Pipeline](#מתודולוגיה-ו-pipeline)
+4. [ביצועי המודל ותוצאות](#ביצועי-המודל-ותוצאות)
+5. [יכולות הדשבורד](#יכולות-הדשבורד)
+6. [מבנה הפרויקט](#מבנה-הפרויקט)
+7. [התקנה והרצה מקומית](#התקנה-והרצה-מקומית)
+8. [פריסה ב-Streamlit Community Cloud](#פריסה-ב-streamlit-community-cloud)
+9. [מגבלות וכיווני פיתוח](#מגבלות-וכיווני-פיתוח)
+10. [רישיון](#רישיון)
 
-Every fraud detection system must balance two kinds of error:
+---
 
-| Error | Meaning | Business cost |
+## הבעיה העסקית
+
+זיהוי הונאות הוא בעיית סיווג קלאסית עם **חוסר איזון קיצוני בין המחלקות**. מתוך 10,000 העסקאות במאגר, רק **151 (1.51%)** הן עסקאות הונאה, כלומר יחס של כ-**1:65**.
+
+מודל שמסווג כל עסקה כלגיטימית ישיג **דיוק (Accuracy) של 98.5%**, אך **לא יזהה אף מקרה הונאה**. לכן Accuracy אינו מדד רלוונטי, והפרויקט מתמקד ב-Precision, ב-Recall, ב-F1-Score ובמדדי AUC.
+
+כל מערכת לזיהוי הונאות נדרשת לאזן בין שני סוגי שגיאות:
+
+| סוג השגיאה | משמעות | המחיר העסקי |
 |---|---|---|
-| **False Negative** | Fraud passes as legitimate | Direct financial loss, chargebacks, and regulatory exposure |
-| **False Positive** | Legitimate transaction is blocked | Customer friction, abandoned purchases, support costs, and churn |
+| **False Negative** | עסקת הונאה שאושרה | הפסד כספי ישיר, Chargebacks וחשיפה רגולטורית |
+| **False Positive** | עסקה לגיטימית שנחסמה | פגיעה בחוויית הלקוח, נטישת רכישות, עומס על מוקד השירות ונטישת לקוחות |
 
-The project optimizes this trade-off explicitly and lets users explore it interactively through an adjustable decision threshold.
+הפרויקט מבצע אופטימיזציה מפורשת של האיזון הזה, ומאפשר לחקור אותו באופן אינטראקטיבי באמצעות סף החלטה מתכוונן.
 
 ---
 
-## Dataset
+## מאגר הנתונים
 
-`credit_card_fraud_10k.csv`: 10,000 transactions, 8 predictive features, no missing values, no duplicates.
+הקובץ `credit_card_fraud_10k.csv` כולל 10,000 עסקאות ו-8 משתנים מסבירים, ללא ערכים חסרים וללא כפילויות.
 
-| Feature | Type | Fraud vs. legitimate (mean) |
+| משתנה (Feature) | סוג | ממוצע: הונאה מול לגיטימי |
 |---|---|---|
-| `amount` | numeric | 216 vs 175 |
-| `transaction_hour` | numeric (0–23) | **3.8 vs 11.7** (fraud clusters at night) |
-| `merchant_category` | categorical (5) | Weak signal |
-| `foreign_transaction` | binary | **54% vs 9%** |
-| `location_mismatch` | binary | **48% vs 8%** |
-| `device_trust_score` | numeric (0–99) | **38 vs 62** |
-| `velocity_last_24h` | numeric | 3.2 vs 2.0 |
-| `cardholder_age` | numeric | No signal |
-| `is_fraud` | **target** | 151 fraud / 9,849 legitimate |
+| `amount` | רציף | 216 מול 175 |
+| `transaction_hour` | רציף (0–23) | **3.8 מול 11.7** (הונאות מתרכזות בשעות הלילה) |
+| `merchant_category` | קטגוריאלי (5 ערכים) | אות חלש |
+| `foreign_transaction` | בינארי | **54% מול 9%** |
+| `location_mismatch` | בינארי | **48% מול 8%** |
+| `device_trust_score` | רציף (0–99) | **38 מול 62** |
+| `velocity_last_24h` | רציף | 3.2 מול 2.0 |
+| `cardholder_age` | רציף | ללא אות |
+| `is_fraud` | **משתנה המטרה** | 151 הונאות / 9,849 לגיטימיות |
 
-`transaction_id` is dropped before training to prevent identifier leakage.
+העמודה `transaction_id` מוסרת לפני האימון כדי למנוע דליפת מידע (Leakage) דרך המזהה.
 
 ---
 
-## Methodology & ML Pipeline
+## מתודולוגיה ו-Pipeline
 
 ```
 Raw CSV ─► Drop ID ─► Stratified 80/20 split ─► ColumnTransformer ─► LogisticRegression(class_weight='balanced')
@@ -72,30 +91,35 @@ Raw CSV ─► Drop ID ─► Stratified 80/20 split ─► ColumnTransformer �
                                                                          Threshold that maximizes F1 = 0.965
 ```
 
-### 1. Model: Logistic Regression
-The model is a linear, interpretable baseline. Its coefficients on standardized features show directly which signals drive fraud risk. The strongest are location mismatch, foreign transaction, low device trust, late-night hours and high velocity.
+### שלב 1: המודל – Logistic Regression
 
-### 2. Imbalance handling: class weighting
-`class_weight='balanced'` makes every misclassified fraud case cost about **65× more** in the loss function than a misclassified legitimate one. This was chosen over naive resampling for three reasons:
+נבחר מודל ליניארי, שקוף וקל לפירוש. המקדמים (Coefficients) על המשתנים המנורמלים מראים ישירות אילו גורמים מעלים את סיכון ההונאה. החזקים שבהם הם `location_mismatch`, `foreign_transaction`, ציון אמון נמוך במכשיר, שעות לילה ומהירות עסקאות גבוהה.
 
-- **Data integrity:** no synthetic records are created. SMOTE would interpolate binary and categorical columns into impossible values such as `foreign_transaction = 0.4`.
-- **No information loss:** undersampling would discard about 97% of the legitimate transactions.
-- **Simplicity and reproducibility:** the method is built into scikit-learn and fully deterministic.
+### שלב 2: טיפול בחוסר האיזון – Class Weighting
 
-### 3. Decision threshold tuning
-Class weighting pushes predicted probabilities upward, so the default **0.5** cut-off produces many false alarms. To correct this:
+ההגדרה `class_weight='balanced'` גורמת לכך ששגיאה בסיווג עסקת הונאה "עולה" לפונקציית ההפסד כ-**פי 65** משגיאה בעסקה לגיטימית. השיטה נבחרה על פני דגימה מחדש (Resampling) משלוש סיבות:
 
-1. **5-fold stratified cross-validation** is run on the **training set only**, producing an out-of-fold fraud score for every training transaction.
-2. The precision-recall curve of those scores is scanned, and the threshold that **maximizes F1** is selected: **`0.965`**. Cross-validated F1 was 0.652, compared with 0.411 at the default 0.5.
-3. The final model is refit on the full training set. The **test set is used only once**, for the final evaluation.
+| שיקול | Class Weighting | חלופות |
+|---|---|---|
+| **שלמות הנתונים** | ללא רשומות סינתטיות | ‏SMOTE יוצר ערכים לא אפשריים, כגון `foreign_transaction = 0.4` |
+| **שימור מידע** | כל הנתונים משמשים לאימון | ‏Undersampling משליך כ-97% מהעסקאות הלגיטימיות |
+| **פשטות ושחזוריות** | מובנה ב-scikit-learn ודטרמיניסטי | דורש ספרייה נוספת ותלוי באקראיות |
+
+### שלב 3: כיול סף ההחלטה – Threshold Tuning
+
+שקלול המחלקות מנפח את ההסתברויות החזויות, ולכן סף ברירת המחדל **0.5** מייצר התראות שווא רבות. התיקון נעשה כך:
+
+1. הרצת **5-fold Stratified Cross-Validation** על **סט האימון בלבד**, לקבלת ציון סיכון Out-of-Fold לכל עסקה באימון.
+2. סריקת עקומת ה-Precision-Recall של הציונים ובחירת הסף שממקסם את ה-F1-Score: **`0.965`**. ערך ה-F1 ב-Cross-Validation עלה מ-0.411 (בסף 0.5) ל-0.652.
+3. אימון המודל הסופי על כל סט האימון. **סט הבדיקה שימש פעם אחת בלבד**, להערכה הסופית.
 
 ---
 
-## Model Performance & Results
+## ביצועי המודל ותוצאות
 
-Evaluation on the held-out test set (2,000 transactions, 30 fraud cases):
+הערכה על סט בדיקה מופרד (Hold-out) של 2,000 עסקאות, מתוכן 30 מקרי הונאה:
 
-| Metric | Default threshold (0.5) | **Tuned threshold (0.965)** |
+| מדד | סף ברירת מחדל (0.5) | **סף מכויל (0.965)** |
 |---|:---:|:---:|
 | ROC AUC | 0.993 | **0.993** |
 | PR AUC (Average Precision) | 0.741 | **0.741** |
@@ -103,43 +127,60 @@ Evaluation on the held-out test set (2,000 transactions, 30 fraud cases):
 | Recall | 1.000 | **0.767** |
 | F1-Score | 0.414 | **0.613** |
 
-> ROC AUC and PR AUC do not depend on the threshold. They measure how well the model **ranks** transactions, and 0.993 indicates excellent separation.
+> מדדי ROC AUC ו-PR AUC אינם תלויים בסף. הם מודדים את יכולת המודל **לדרג** עסקאות לפי סיכון, וערך של 0.993 מעיד על הפרדה מצוינת.
 
-### Confusion matrix
+### מטריצת בלבול (Confusion Matrix)
 
-| | Default (0.5): Pred. Legit | Default (0.5): Pred. Fraud | **Tuned (0.965): Pred. Legit** | **Tuned (0.965): Pred. Fraud** |
-|---|:---:|:---:|:---:|:---:|
-| **Actual Legit** | 1,885 | 85 | **1,948** | **22** |
-| **Actual Fraud** | 0 | 30 | **7** | **23** |
+**סף ברירת מחדל (0.5):**
 
-**Key takeaway:** threshold tuning cuts **false alarms by 74% (85 → 22)** and **doubles precision**, at the cost of 7 missed frauds. The right operating point depends on the relative cost of a missed fraud versus a blocked customer. The dashboard's threshold slider makes that trade-off explicit.
+| | חזוי: לגיטימי | חזוי: הונאה |
+|---|:---:|:---:|
+| **בפועל: לגיטימי** | 1,885 | 85 |
+| **בפועל: הונאה** | 0 | 30 |
 
-> With only 30 fraud cases in the test set, a single misclassification moves recall by about 3.3 points. Treat the metrics as estimates with meaningful variance.
+**סף מכויל (0.965):**
 
----
+| | חזוי: לגיטימי | חזוי: הונאה |
+|---|:---:|:---:|
+| **בפועל: לגיטימי** | **1,948** | **22** |
+| **בפועל: הונאה** | **7** | **23** |
 
-## Dashboard Features
+### תובנה מרכזית
 
-### Tab 1: Model Performance & Analysis
-- **KPI cards:** Precision, Recall, F1, ROC AUC and PR AUC
-- **Confusion matrix:** switchable between raw counts and normalized percentages
-- **ROC curve** and **precision-recall curve**, each marking the current operating point
-- **Feature coefficients chart:** which features increase or decrease fraud risk
-- **Dataset statistics:** class balance and per-class feature means
-- **Methodology summary** with a default vs. tuned threshold comparison
-- **Sidebar threshold slider:** every metric and chart updates live
+כיול הסף **הפחית את התראות השווא ב-74% (מ-85 ל-22)** ו**הכפיל את ה-Precision**, במחיר של 7 הונאות שלא זוהו. נקודת העבודה הנכונה תלויה ביחס בין עלות הונאה שהוחמצה לעלות חסימת לקוח לגיטימי, ומחוון הסף בדשבורד הופך את השיקול הזה לגלוי ומדיד.
 
-### Tab 2: Interactive Fraud Prediction
-- Input controls (sliders, numeric inputs, checkboxes) for all 8 features
-- **Load Fraud Sample** and **Load Legitimate Sample** buttons that load real held-out test transactions
-- **Predict** button for real-time inference
-- Output: **fraud risk score (%)**, a final classification, a **red HIGH RISK or green LOW RISK badge**, and a **risk gauge** showing the decision threshold
-
-> Because of class weighting, the displayed percentage is a **risk score** that overstates the true fraud probability (base rate about 1.5%). It should be compared against the threshold, not read as a calibrated probability.
+> סט הבדיקה כולל 30 מקרי הונאה בלבד, ולכן כל טעות סיווג בודדת מזיזה את ה-Recall בכ-3.3 נקודות. יש להתייחס למדדים כהערכות בעלות שונות משמעותית.
 
 ---
 
-## Project Structure
+## יכולות הדשבורד
+
+### לשונית 1: ביצועי המודל וניתוח
+
+| רכיב | תיאור |
+|---|---|
+| **כרטיסי KPI** | ‏Precision, Recall, F1-Score, ROC AUC ו-PR AUC |
+| **מטריצת בלבול** | מעבר בין ערכים מוחלטים לאחוזים מנורמלים |
+| **עקומות ROC ו-Precision-Recall** | כולל סימון נקודת העבודה הנוכחית |
+| **גרף מקדמי המודל** | אילו משתנים מעלים ואילו מורידים את סיכון ההונאה |
+| **סטטיסטיקות הנתונים** | איזון המחלקות וממוצעי המשתנים לפי מחלקה |
+| **סיכום מתודולוגי** | השוואה בין סף ברירת המחדל לסף המכויל |
+| **מחוון סף בסרגל הצד** | כל המדדים והגרפים מתעדכנים בזמן אמת |
+
+### לשונית 2: חיזוי הונאה אינטראקטיבי
+
+| רכיב | תיאור |
+|---|---|
+| **פקדי קלט** | מחוונים, שדות מספריים ותיבות סימון לכל 8 המשתנים |
+| **טעינת דוגמאות** | הכפתורים Load Fraud Sample ו-Load Legitimate Sample טוענים עסקאות אמיתיות מסט הבדיקה |
+| **כפתור Predict** | הרצת המודל בזמן אמת |
+| **פלט** | ציון סיכון באחוזים, סיווג סופי, תג **אדום (סיכון גבוה)** או **ירוק (סיכון נמוך)**, ומד סיכון (Gauge) המציג את הסף |
+
+> בשל שקלול המחלקות, האחוז המוצג הוא **ציון סיכון** ולא הסתברות מכוילת, והוא מגזים בהסתברות האמיתית להונאה (שיעור הבסיס הוא כ-1.5%). יש להשוות אותו לסף ההחלטה.
+
+---
+
+## מבנה הפרויקט
 
 ```
 credit-card-fraud-detection/
@@ -155,13 +196,13 @@ credit-card-fraud-detection/
 └── README.md
 ```
 
-All file paths are resolved relative to the source files (`Path(__file__).parent`), so the app runs unchanged locally and in the cloud.
+כל נתיבי הקבצים מחושבים ביחס לקבצי הקוד (`Path(__file__).parent`), כך שהאפליקציה רצה ללא שינויים הן מקומית והן בענן.
 
 ---
 
-## Installation & Local Execution
+## התקנה והרצה מקומית
 
-**Prerequisites:** Python 3.10+ and Git.
+**דרישות מקדימות:** ‏Python 3.10 ומעלה ו-Git.
 
 ```bash
 # 1. Clone the repository
@@ -185,32 +226,33 @@ python model.py
 streamlit run app.py
 ```
 
-The dashboard opens at **http://localhost:8501**.
+הדשבורד ייפתח בכתובת **http://localhost:8501**.
 
-> The app loads `fraud_model.joblib` when it is compatible with the installed scikit-learn version. Otherwise it retrains automatically on first launch, which takes a few seconds.
-
----
-
-## Deployment (Streamlit Community Cloud)
-
-1. Push this repository to GitHub (public or private).
-2. Go to [share.streamlit.io](https://share.streamlit.io) and sign in with GitHub.
-3. Click **Create app**, then **Deploy a public app from GitHub**.
-4. Select the repository, branch `main`, and main file path `app.py`.
-5. Under **Advanced settings**, choose Python **3.12**.
-6. Click **Deploy**. Dependencies are installed from `requirements.txt` automatically.
+> האפליקציה טוענת את הקובץ `fraud_model.joblib` אם הוא תואם לגרסת scikit-learn המותקנת. אחרת, המודל מאומן מחדש באופן אוטומטי בהפעלה הראשונה, תוך שניות ספורות.
 
 ---
 
-## Limitations & Future Work
+## פריסה ב-Streamlit Community Cloud
 
-- **Small fraud sample:** with 151 fraud cases in total, the test metrics have high variance. Repeated stratified cross-validation would give tighter estimates.
-- **Calibration:** class weighting distorts probabilities. Adding `CalibratedClassifierCV` would produce interpretable fraud probabilities.
-- **Cost-sensitive threshold:** the threshold could instead minimize expected monetary loss, for example using the transaction `amount` as the cost of a missed fraud.
-- **Model comparison:** benchmark against gradient boosting (XGBoost or LightGBM) and against SMOTENC resampling.
+1. היכנסו ל-[share.streamlit.io](https://share.streamlit.io) והתחברו עם חשבון GitHub.
+2. לחצו על **Create app** ובחרו **Deploy a public app from GitHub**.
+3. בחרו את ה-Repository ‏`itaybs/credit-card-fraud-detection`, את ה-Branch ‏`main` ואת הקובץ הראשי `app.py`.
+4. תחת **Advanced settings**, בחרו Python **3.12**.
+5. לחצו על **Deploy**. התלויות מותקנות אוטומטית מתוך `requirements.txt`, וכל Push ל-`main` מעדכן את האפליקציה.
 
 ---
 
-## License
+## מגבלות וכיווני פיתוח
 
-This project is licensed under the [MIT License](LICENSE).
+| נושא | מגבלה נוכחית | כיוון לשיפור |
+|---|---|---|
+| **גודל המדגם** | ‏151 מקרי הונאה בלבד, ולכן שונות גבוהה במדדים | ‏Repeated Stratified Cross-Validation להערכה יציבה יותר |
+| **כיול הסתברויות** | שקלול המחלקות מעוות את ההסתברויות | שימוש ב-`CalibratedClassifierCV` לקבלת הסתברויות אמינות |
+| **סף מבוסס עלות** | הסף ממקסם F1 ולא עלות כספית | מזעור ההפסד הצפוי, למשל לפי `amount` כעלות של הונאה שהוחמצה |
+| **השוואת מודלים** | נבחן מודל יחיד | השוואה מול Gradient Boosting ‏(XGBoost / LightGBM) ומול SMOTENC |
+
+---
+
+## רישיון
+
+הפרויקט מופץ תחת [רישיון MIT](LICENSE).
