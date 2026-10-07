@@ -165,7 +165,7 @@ All file paths are resolved relative to the source files (`Path(__file__).parent
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/<your-username>/credit-card-fraud-detection.git
+git clone https://github.com/itaybs/credit-card-fraud-detection.git
 cd credit-card-fraud-detection
 
 # 2. (Recommended) create and activate a virtual environment
