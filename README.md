@@ -8,6 +8,12 @@
 [![scikit-learn](https://img.shields.io/badge/scikit--learn-1.3%2B-F7931E?logo=scikitlearn&logoColor=white)](https://scikit-learn.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
+<br>
+
+[![Live Demo](https://img.shields.io/badge/%F0%9F%9A%80_Live_Demo-%D7%9C%D7%A6%D7%A4%D7%99%D7%99%D7%94_%D7%91%D7%90%D7%A4%D7%9C%D7%99%D7%A7%D7%A6%D7%99%D7%94-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://credit-card-fraud-detection-by-itaybasteker.streamlit.app/)
+
+**[לצפייה בדשבורד החי ←](https://credit-card-fraud-detection-by-itaybasteker.streamlit.app/)**
+
 </div>
 
 פרויקט Machine Learning מקצה לקצה לזיהוי עסקאות הונאה בכרטיסי אשראי. הפרויקט משלב מודל **Logistic Regression** עם שקלול מחלקות, **סף החלטה (Decision Threshold)** שכויל באמצעות Cross-Validation, ודשבורד **Streamlit** אינטראקטיבי לניתוח ביצועי המודל ולחיזוי סיכון בזמן אמת.
@@ -155,7 +161,23 @@ Raw CSV ─► Drop ID ─► Stratified 80/20 split ─► ColumnTransformer �
 
 ## יכולות הדשבורד
 
+הדשבורד בנוי בעברית מלאה בפריסת RTL, מותאם לשימוש במחשב ובמובייל, וזמין אונליין ב-[Streamlit Community Cloud](https://credit-card-fraud-detection-by-itaybasteker.streamlit.app/).
+
 ### לשונית 1: ביצועי המודל וניתוח
+
+<div align="center">
+  <img src="assets/tab1_full.png" alt="לשונית ביצועי המודל וניתוח" width="900">
+</div>
+
+<br>
+
+לשונית זו מציגה את **תמונת המצב המלאה של המודל** במבט אחד, מהמדדים הסטטיסטיים ועד המשמעות העסקית שלהם:
+
+- **מדדי ביצוע מרכזיים:** חמישה כרטיסי KPI, ולצד כל מדד הערך המקביל בסף ברירת המחדל, כך ששיפור הכיול גלוי מיד.
+- **השפעה עסקית:** תרגום מטריצת הבלבול למונחים שמנהלים מבינים: הונאות שנתפסו, הונאות שהוחמצו (הפסד כספי) והתראות שווא (פגיעה בלקוחות).
+- **ניתוח גרפי:** מטריצת בלבול ועקומות ROC ו-Precision-Recall, עם סימון נקודת העבודה של הסף הנוכחי.
+- **גורמי הסיכון במודל:** מקדמי המודל מראים בשקיפות מלאה אילו אותות מעלים את הסיכון (אדום) ואילו מורידים אותו (ירוק).
+- **מתודולוגיה:** הסבר על שקלול המחלקות וכיול הסף, וטבלת השוואה בין סף ברירת המחדל לסף המכויל.
 
 | רכיב | תיאור |
 |---|---|
@@ -168,6 +190,19 @@ Raw CSV ─► Drop ID ─► Stratified 80/20 split ─► ColumnTransformer �
 | **מחוון סף בסרגל הצד** | כל המדדים והגרפים מתעדכנים בזמן אמת |
 
 ### לשונית 2: חיזוי הונאה אינטראקטיבי
+
+<div align="center">
+  <img src="assets/tab2_prediction.png" alt="לשונית חיזוי הונאה אינטראקטיבי" width="900">
+</div>
+
+<br>
+
+לשונית זו הופכת את המודל ל**כלי עבודה תפעולי**: מזינים פרטי עסקה ומקבלים הערכת סיכון מוסברת תוך שנייה. בדוגמה שבתמונה נטענה עסקת הונאה אמיתית מסט הבדיקה (שעת לילה, אי-התאמת מיקום וציון אמינות מכשיר נמוך), והמודל סיווג אותה בסיכון גבוה.
+
+- **קלט מובנה:** פרטי העסקה מחולקים לשלוש קבוצות: פרטי העסקה, אותות סיכון ובעל הכרטיס.
+- **ציון ותג סיכון:** ציון באחוזים ותג צבעוני בשלוש רמות, עם המלצה לפעולה (חסימה, ניטור או אישור).
+- **מד סיכון:** מציג את מיקום העסקה ביחס לסף ההחלטה.
+- **הסבר החיזוי:** הגרף "מה השפיע על הציון?" מפרט אילו משתנים דחפו את הציון למעלה או למטה, וכך כל החלטה ניתנת להסבר ולביקורת.
 
 | רכיב | תיאור |
 |---|---|
@@ -187,6 +222,9 @@ Raw CSV ─► Drop ID ─► Stratified 80/20 split ─► ColumnTransformer �
 credit-card-fraud-detection/
 ├── .streamlit/
 │   └── config.toml
+├── assets/
+│   ├── tab1_full.png
+│   └── tab2_prediction.png
 ├── app.py
 ├── model.py
 ├── data_loader.py
@@ -206,6 +244,7 @@ credit-card-fraud-detection/
 | `fraud_model.joblib` | המודל המאומן ותוצרי ההערכה |
 | `requirements.txt` | תלויות Python |
 | `.streamlit/config.toml` | הגדרות עיצוב ושרת |
+| `assets/` | צילומי מסך של הדשבורד |
 | `LICENSE` | רישיון MIT |
 
 כל נתיבי הקבצים מחושבים ביחס לקבצי הקוד (`Path(__file__).parent`), כך שהאפליקציה רצה ללא שינויים הן מקומית והן בענן.
@@ -259,6 +298,10 @@ streamlit run app.py
 ---
 
 ## פריסה ב-Streamlit Community Cloud
+
+האפליקציה פרוסה וזמינה בכתובת: **https://credit-card-fraud-detection-by-itaybasteker.streamlit.app/**
+
+לפריסה עצמאית של עותק משלכם:
 
 1. היכנסו ל-[share.streamlit.io](https://share.streamlit.io) והתחברו עם חשבון GitHub.
 2. לחצו על **Create app** ובחרו **Deploy a public app from GitHub**.
