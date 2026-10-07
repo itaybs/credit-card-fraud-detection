@@ -4,7 +4,7 @@
 ### מודל Machine Learning ודשבורד אינטראקטיבי לניתוח סיכונים
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-1.50%2B-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.63%2B-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![scikit-learn](https://img.shields.io/badge/scikit--learn-1.3%2B-F7931E?logo=scikitlearn&logoColor=white)](https://scikit-learn.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
@@ -172,9 +172,10 @@ Raw CSV ─► Drop ID ─► Stratified 80/20 split ─► ColumnTransformer �
 | רכיב | תיאור |
 |---|---|
 | **פקדי קלט** | מחוונים, שדות מספריים ותיבות סימון לכל 8 המשתנים |
-| **טעינת דוגמאות** | הכפתורים Load Fraud Sample ו-Load Legitimate Sample טוענים עסקאות אמיתיות מסט הבדיקה |
-| **כפתור Predict** | הרצת המודל בזמן אמת |
-| **פלט** | ציון סיכון באחוזים, סיווג סופי, תג **אדום (סיכון גבוה)** או **ירוק (סיכון נמוך)**, ומד סיכון (Gauge) המציג את הסף |
+| **טעינת דוגמאות** | הכפתורים 'טען דוגמת הונאה' ו-'טען דוגמה לגיטימית' טוענים עסקאות אמיתיות מסט הבדיקה ומציגים את התוצאה מיד |
+| **כפתור 'חשב סיכון הונאה'** | הרצת המודל בזמן אמת |
+| **פלט** | ציון סיכון באחוזים, תג בשלוש רמות: **אדום (סיכון גבוה)**, **כתום (סיכון בינוני)** או **ירוק (סיכון נמוך)**, ומד סיכון (Gauge) המציג את הסף |
+| **הסבר החיזוי** | גרף 'מה השפיע על הציון?' המציג אילו משתנים העלו או הורידו את ציון הסיכון של העסקה |
 
 > בשל שקלול המחלקות, האחוז המוצג הוא **ציון סיכון** ולא הסתברות מכוילת, והוא מגזים בהסתברות האמיתית להונאה (שיעור הבסיס הוא כ-1.5%). יש להשוות אותו לסף ההחלטה.
 

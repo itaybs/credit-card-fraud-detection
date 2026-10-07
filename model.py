@@ -146,6 +146,22 @@ def predict_proba(pipeline: Pipeline, features: dict) -> float:
     return float(pipeline.predict_proba(pd.DataFrame([features]))[0, 1])
 
 
+def explain(pipeline: Pipeline, features: dict) -> pd.DataFrame:
+    """Per-feature contribution to the log-odds (coefficient x transformed value)."""
+    prep = pipeline.named_steps["prep"]
+    x = prep.transform(pd.DataFrame([features]))
+    x = x.toarray()[0] if hasattr(x, "toarray") else np.asarray(x)[0]
+    names = [n.split("__", 1)[1] for n in prep.get_feature_names_out()]
+    contrib = pd.DataFrame(
+        {"feature": names, "contribution": x * pipeline.named_steps["clf"].coef_[0]}
+    )
+    return (
+        contrib[contrib["contribution"] != 0]
+        .sort_values("contribution", key=np.abs, ascending=False)
+        .reset_index(drop=True)
+    )
+
+
 def _print_report(a: dict) -> None:
     t, m, d = a["tuning"], a["metrics"], a["metrics_default"]
     print(f"Train: {a['n_train']} rows | Test: {a['n_test']} rows ({a['n_test_fraud']} fraud)")
