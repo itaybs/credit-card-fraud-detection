@@ -185,16 +185,27 @@ Raw CSV ─► Drop ID ─► Stratified 80/20 split ─► ColumnTransformer �
 ```
 credit-card-fraud-detection/
 ├── .streamlit/
-│   └── config.toml              # Theme and server settings
-├── app.py                       # Streamlit dashboard (2 tabs)
-├── model.py                     # Pipeline, CV threshold tuning, evaluation, persistence
-├── data_loader.py               # Data loading, feature definitions, stratified split
-├── credit_card_fraud_10k.csv    # Dataset (10,000 transactions)
-├── fraud_model.joblib           # Pre-trained model and evaluation artifacts
-├── requirements.txt             # Python dependencies
-├── LICENSE                      # MIT License
+│   └── config.toml
+├── app.py
+├── model.py
+├── data_loader.py
+├── credit_card_fraud_10k.csv
+├── fraud_model.joblib
+├── requirements.txt
+├── LICENSE
 └── README.md
 ```
+
+| קובץ | תפקיד |
+|---|---|
+| `app.py` | דשבורד Streamlit עם שתי לשוניות |
+| `model.py` | ‏Pipeline, כיול סף באמצעות Cross-Validation, הערכה ושמירת המודל |
+| `data_loader.py` | טעינת הנתונים, הגדרת המשתנים וחלוקה מרובדת (Stratified Split) |
+| `credit_card_fraud_10k.csv` | מאגר הנתונים (10,000 עסקאות) |
+| `fraud_model.joblib` | המודל המאומן ותוצרי ההערכה |
+| `requirements.txt` | תלויות Python |
+| `.streamlit/config.toml` | הגדרות עיצוב ושרת |
+| `LICENSE` | רישיון MIT |
 
 כל נתיבי הקבצים מחושבים ביחס לקבצי הקוד (`Path(__file__).parent`), כך שהאפליקציה רצה ללא שינויים הן מקומית והן בענן.
 
@@ -204,25 +215,39 @@ credit-card-fraud-detection/
 
 **דרישות מקדימות:** ‏Python 3.10 ומעלה ו-Git.
 
+**שלב 1: שכפול המאגר**
+
 ```bash
-# 1. Clone the repository
 git clone https://github.com/itaybs/credit-card-fraud-detection.git
 cd credit-card-fraud-detection
+```
 
-# 2. (Recommended) create and activate a virtual environment
+**שלב 2: יצירת סביבה וירטואלית והפעלתה (מומלץ)**
+
+```bash
 python -m venv .venv
-# Windows:
-.venv\Scripts\activate
-# macOS / Linux:
-source .venv/bin/activate
+```
 
-# 3. Install dependencies
+| מערכת הפעלה | פקודת הפעלה |
+|---|---|
+| ‏Windows | `.venv\Scripts\activate` |
+| ‏macOS / Linux | `source .venv/bin/activate` |
+
+**שלב 3: התקנת התלויות**
+
+```bash
 pip install -r requirements.txt
+```
 
-# 4. (Optional) retrain the model and print the full evaluation report
+**שלב 4 (אופציונלי): אימון מחדש של המודל והדפסת דוח הערכה מלא**
+
+```bash
 python model.py
+```
 
-# 5. Launch the dashboard
+**שלב 5: הפעלת הדשבורד**
+
+```bash
 streamlit run app.py
 ```
 
